@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+	body {
+		height: 1200px;
+	}
+    .out {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        margin: 0 auto;
+        margin-top: 200px;
+        outline: 10px solid black;
+        transform-origin: 250px 250px;
+    }
+    
+    .inn {
+        position: absolute;
+        top: 400px;
+        width: 100px;
+        height: 100px;
+        background: green;
+    }
+</style>
+
+<body>
+    <div class="out">
+        <div class="inn">
+        </div>
+    </div>
+
+    <script>
+        const inn = document.querySelector('.inn');
+        const out = document.querySelector('.out');
+
+        let angle = 0; // угол поворо внешнего куба
+        let step = 0; // шаг скатывания кубика
+        let lever = 0; // переключатель положения
+        let acceleration = 1; // ускорение скатывания кубика
+
+        function rotate(lev, min_ang, ang, min_step, max_step, k, pos) {
+            if (lever == lev) {
+                // Вращение внешнего куба
+                if (angle < ang) {
+                    angle++;
+                    out.style.transform = "rotate(" + angle + "deg)";
+                }
+
+                // Вращение внутреннего куба
+                if (angle > min_ang) {
+                    if (k == 1) {
+                        if (step < min_step) {
+                            step += 2 * acceleration;
+                            acceleration += 0.25;
+                            inn.style[pos] = step + "px";
+                            if (step >= min_step) {
+                                inn.style[pos] = max_step + "px";
+                                lever += 1;
+                                acceleration = 1;
+                                step = max_step;
+                            }
+                        }
+                    } else if (k == -1) {
+                        if (step != min_step) {
+                            step -= 2 * acceleration;
+                            acceleration += 0.25;
+                            inn.style[pos] = step + "px";
+                            if (step <= min_step) {
+                                inn.style[pos] = min_step + "px";
+                                lever += 1;
+                                acceleration = 1;
+                                step = max_step;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        const timer = setInterval(() => {
+            rotate(0, 0, 45, 400, 400, 1, "left");
+
+            rotate(1, 90, 135, 0, 400, -1, "top");
+
+            rotate(2, 180, 225, 0, 0, -1, "left");
+
+            rotate(3, 270, 315, 400, 400, 1, "top");
+
+            // Поворот до конца и запуск цикла заного
+            if (lever == 4) {
+                if (angle < 360) {
+                    angle++;
+                    out.style.transform = "rotate(" + angle + "deg)";
+                }
+
+                if (angle == 360) {
+                    lever = 0;
+                    step = 0;
+                    acceleration = 1;
+                    angle = 0;
+                }
+            }
+
+        }, 25);
+    </script>
+</body>
+
+</html>
